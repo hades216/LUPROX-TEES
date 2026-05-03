@@ -29,7 +29,7 @@ export function CyberCentipede() {
     resize();
 
     const SEGMENTS = 25;
-    const SEGMENT_SPACING = 60;
+    const SEGMENT_SPACING = 25;
     
     // Centipede array
     const points: Point[] = Array.from({ length: SEGMENTS }).map(() => ({
@@ -91,19 +91,19 @@ export function CyberCentipede() {
         const angle = Math.atan2(nextP.y - p.y, nextP.x - p.x);
 
         const sizeFade = 1 - (i / SEGMENTS);
-        const legBaseSize = 60 + sizeFade * 90;
+        const legBaseSize = 15 + sizeFade * 25;
         const walkCycle = Math.sin(time * 10 + i * 0.5) * 0.5;
 
         // Gloomy vibrant legs
         ctx.strokeStyle = "rgba(180, 0, 255, 0.4)";
-        ctx.lineWidth = 8 + sizeFade * 12;
+        ctx.lineWidth = 3 + sizeFade * 4;
         ctx.shadowColor = "rgba(180, 0, 255, 0.8)";
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 10;
 
         // Left Leg
         ctx.beginPath();
-        const lBaseX = p.x + Math.cos(angle - Math.PI / 2) * (20 + sizeFade * 40);
-        const lBaseY = p.y + Math.sin(angle - Math.PI / 2) * (20 + sizeFade * 40);
+        const lBaseX = p.x + Math.cos(angle - Math.PI / 2) * (6 + sizeFade * 12);
+        const lBaseY = p.y + Math.sin(angle - Math.PI / 2) * (6 + sizeFade * 12);
         const lJointX = lBaseX + Math.cos(angle - 1.2 + walkCycle) * legBaseSize;
         const lJointY = lBaseY + Math.sin(angle - 1.2 + walkCycle) * legBaseSize;
         const lTipX = lJointX + Math.cos(angle - 2 + walkCycle * 0.5) * legBaseSize * 1.5;
@@ -115,8 +115,8 @@ export function CyberCentipede() {
 
         // Right Leg
         ctx.beginPath();
-        const rBaseX = p.x + Math.cos(angle + Math.PI / 2) * (20 + sizeFade * 40);
-        const rBaseY = p.y + Math.sin(angle + Math.PI / 2) * (20 + sizeFade * 40);
+        const rBaseX = p.x + Math.cos(angle + Math.PI / 2) * (6 + sizeFade * 12);
+        const rBaseY = p.y + Math.sin(angle + Math.PI / 2) * (6 + sizeFade * 12);
         const rJointX = rBaseX + Math.cos(angle + 1.2 - walkCycle) * legBaseSize;
         const rJointY = rBaseY + Math.sin(angle + 1.2 - walkCycle) * legBaseSize;
         const rTipX = rJointX + Math.cos(angle + 2 - walkCycle * 0.5) * legBaseSize * 1.5;
@@ -144,8 +144,8 @@ export function CyberCentipede() {
         ctx.rotate(angle);
 
         const sizeFade = Math.sin((i / SEGMENTS) * Math.PI) * 0.8 + 0.2;
-        const width = (i === 0 ? 100 : 80) * sizeFade;
-        const height = (i === 0 ? 120 : 100) * sizeFade;
+        const width = (i === 0 ? 30 : 22) * sizeFade;
+        const height = (i === 0 ? 35 : 28) * sizeFade;
 
         // Base Glassy Armor Plate
         ctx.beginPath();

@@ -11,7 +11,9 @@ import {
   Html,
   Cloud,
   Sparkles,
-  MeshTransmissionMaterial
+  MeshTransmissionMaterial,
+  Instances,
+  Instance
 } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -636,15 +638,43 @@ function VoidDust({ count = 1000 }) {
 
 function NeonCity() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const buildings = useMemo(() => {
-    return Array.from({ length: 40 }).map((_, i) => {
+  const words = ['未来', '暗闇', '警告', 'サイバー', 'ネオン', '死', '機械'];
+  
+  const { buildings, windows } = useMemo(() => {
+    const bData = Array.from({ length: 40 }).map((_, i) => {
       const x = (Math.random() - 0.5) * 60;
       const z = -15 - Math.random() * 25;
       const width = 2 + Math.random() * 4;
       const height = 5 + Math.random() * 30;
       const depth = 2 + Math.random() * 4;
-      return { x, z, width, height, depth };
+      const hasNeon = Math.random() > 0.6;
+      const word = hasNeon ? words[Math.floor(Math.random() * words.length)] : '';
+      const color = Math.random() > 0.5 ? "#00ffff" : "#ff00ff";
+      return { x, z, width, height, depth, hasNeon, word, color };
     });
+
+    const wData: any[] = [];
+    bData.forEach(b => {
+      const numWindows = Math.floor(b.height * 1.5);
+      for (let i = 0; i < numWindows; ++i) {
+        const isFront = Math.random() > 0.5;
+        const wx = (Math.random() - 0.5) * b.width * 0.8;
+        const wy = (Math.random() - 0.5) * b.height * 0.9;
+        const wz = (Math.random() - 0.5) * b.depth * 0.8;
+        
+        wData.push({
+          position: [
+            b.x + (isFront ? wx : b.width/2 + 0.01),
+            b.height/2 + wy,
+            b.z + (isFront ? b.depth/2 + 0.01 : wz)
+          ] as [number, number, number],
+          rotation: [0, isFront ? 0 : Math.PI/2, 0] as [number, number, number],
+          color: Math.random() > 0.4 ? "#fffde7" : "#4fc3f7"
+        });
+      }
+    });
+
+    return { buildings: bData, windows: wData };
   }, []);
 
   return (
@@ -652,85 +682,46 @@ function NeonCity() {
       {buildings.map((b, i) => (
         <mesh key={`b-${i}`} position={[b.x, b.height / 2, b.z]}>
           <boxGeometry args={[b.width, b.height, b.depth]} />
-          <meshStandardMaterial color="#050510" roughness={0.7} metalness={0.5} />
-          {Math.random() > 0.6 && (
-            <mesh position={[Math.random() > 0.5 ? b.width/2 + 0.1 : -b.width/2 - 0.1, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-               <planeGeometry args={[0.5, b.height * 0.7]} />
-               <meshBasicMaterial color={Math.random() > 0.5 ? "#00ffff" : "#ff00ff"} transparent opacity={0.6} />
-            </mesh>
+          <meshStandardMaterial color="#030510" roughness={0.3} metalness={0.9} />
+
+          {b.hasNeon && (
+            <group position={[b.width / 2 + 0.01, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <mesh>
+                <planeGeometry args={[0.5, b.height * 0.7]} />
+                <meshBasicMaterial color={b.color} transparent opacity={0.2} />
+              </mesh>
+              <Text
+                position={[0, 0, 0.01]}
+                color={b.color}
+                fontSize={0.8}
+                maxWidth={0.5}
+                lineHeight={1}
+                textAlign="center"
+                anchorX="center"
+                anchorY="middle"
+                characters="未来暗闇警告サイバーネオン死機械"
+              >
+                {b.word.split('').join('\n')}
+              </Text>
+            </group>
           )}
         </mesh>
       ))}
-    </group>
-  );
-}
 
-function GoreBots() {
-  const bot1Ref = useRef<THREE.Group>(null);
-  const bot2Ref = useRef<THREE.Group>(null);
-  const [dismembered1, setDismembered1] = useState(false);
-  const [dismembered2, setDismembered2] = useState(false);
-
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    if (bot1Ref.current) {
-      if (!dismembered1) {
-        bot1Ref.current.position.x = -1.5 + Math.sin(time * 4) * 0.8;
-        bot1Ref.current.rotation.z = Math.sin(time * 8) * 0.4;
-      } else {
-        bot1Ref.current.position.y = 0;
-        bot1Ref.current.rotation.z = -Math.PI / 2 + Math.sin(time * 20) * 0.1;
-      }
-    }
-    
-    if (bot2Ref.current) {
-      if (!dismembered2) {
-        bot2Ref.current.position.x = 1.5 + Math.cos(time * 4.5) * 0.8;
-        bot2Ref.current.rotation.z = Math.cos(time * 7) * -0.4;
-      } else {
-        bot2Ref.current.position.y = 0;
-        bot2Ref.current.rotation.z = Math.PI / 2 + Math.cos(time * 20) * 0.1;
-      }
-    }
-  });
-
-  return (
-    <group position={[0, -2, -10]}>
-      <group 
-        ref={bot1Ref} 
-        onClick={() => setDismembered1(true)}
-        onPointerOver={(e) => { document.body.style.cursor = 'crosshair'; e.stopPropagation(); }}
-        onPointerOut={() => document.body.style.cursor = 'auto'}
-      >
-        <mesh position={[0, 1.5, 0]}>
-          <boxGeometry args={[1, 3, 1]} />
-          <meshStandardMaterial color="#111" metalness={0.9} roughness={0.2} />
-        </mesh>
-        <mesh position={[1.5, 2, 0]} rotation={[0, 0, Math.PI / 3]}>
-           <cylinderGeometry args={[0.05, 0.05, 4]} />
-           <meshBasicMaterial color="#00ffff" />
-        </mesh>
-        {dismembered1 && <Sparkles count={500} size={15} color="#ff0000" scale={[4, 4, 4]} speed={3} position={[0, 1.5, 0]} />}
-      </group>
-      
-      <group 
-        ref={bot2Ref} 
-        onClick={() => setDismembered2(true)}
-        onPointerOver={(e) => { document.body.style.cursor = 'crosshair'; e.stopPropagation(); }}
-        onPointerOut={() => document.body.style.cursor = 'auto'}
-      >
-        <mesh position={[0, 1.5, 0]}>
-          <boxGeometry args={[1, 3, 1]} />
-          <meshStandardMaterial color="#111" metalness={0.9} roughness={0.2} />
-        </mesh>
-        <mesh position={[-1.5, 2, 0]} rotation={[0, 0, -Math.PI / 3]}>
-           <cylinderGeometry args={[0.05, 0.05, 4]} />
-           <meshBasicMaterial color="#ff00ff" />
-        </mesh>
-        {dismembered2 && <Sparkles count={500} size={15} color="#ff0000" scale={[4, 4, 4]} speed={3} position={[0, 1.5, 0]} />}
-      </group>
-
-      <Sparkles count={200} size={15} color="#ff0000" scale={[10, 5, 5]} speed={1} position={[0, 2.5, 0]} />
+      {windows.length > 0 && (
+        <Instances limit={windows.length}>
+          <planeGeometry args={[0.08, 0.15]} />
+          <meshBasicMaterial toneMapped={false} />
+          {windows.map((w, i) => (
+            <Instance
+              key={i}
+              position={w.position}
+              rotation={w.rotation}
+              color={w.color}
+            />
+          ))}
+        </Instances>
+      )}
     </group>
   );
 }
@@ -753,10 +744,14 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
     
     // Heartbeat pulse for lighting - optimized to avoid unnecessary color object creation
     const heart = Math.pow(Math.sin(state.clock.elapsedTime * 1.5), 10) * 2;
+    if (!state.scene.background) {
+      state.scene.background = new THREE.Color(0.01, 0.02, 0.06);
+    }
+    const bg = state.scene.background as THREE.Color;
     if (heart > 0.01) {
-      state.scene.background = new THREE.Color(heart * 0.02, 0, heart * 0.03);
-    } else if (state.scene.background instanceof THREE.Color && (state.scene.background.r > 0 || state.scene.background.b > 0)) {
-      state.scene.background = new THREE.Color(0, 0, 0);
+      bg.setRGB(heart * 0.02 + 0.01, 0.01, heart * 0.03 + 0.06);
+    } else if (bg.r > 0.01 || bg.b > 0.06) {
+      bg.setRGB(0.01, 0.02, 0.06); // Back to #030510 base
     }
   });
   
@@ -765,7 +760,7 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-      <fog attach="fog" args={["#000000", 5, 40]} />
+      <fog attach="fog" args={["#030510", 5, 45]} />
       {!isMobile && <Environment preset="city" />}
       <ambientLight intensity={0.4} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} />
@@ -778,7 +773,6 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       
       <VoidLattice />
       <NeonCity />
-      <GoreBots />
       <AbyssalGlow />
       {!isMobile && <VoidDust count={2000} />}
       
@@ -791,11 +785,10 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial 
-          color="#000000" 
-          roughness={0.2} 
-          metalness={0.8}
+          color="#050812" 
+          roughness={0.1} 
+          metalness={0.9}
         />
-        <gridHelper args={[100, 50, "#002222", "#220022"]} rotation={[Math.PI / 2, 0, 0]} />
       </mesh>
 
       {/* Cinematic Horror Elements */}

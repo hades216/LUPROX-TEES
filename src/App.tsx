@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useInView } from "motion/react";
 import { ChevronDown, Menu, ShoppingBag, X } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ThreeScene from "./components/ThreeScene";
 import { CyberCentipede } from "./components/CyberCentipede";
 import { Section, SigilOverlay, MovingShadows, Scanlines, CinematicEffects, DecorativeFloatingElements, LoadingScreen, DangerBulletin, LorePopUp, CartDrawer } from "./components/UI";
@@ -44,26 +44,29 @@ function SlideReveal({ children }: { children: React.ReactNode }) {
 function CyberGlyph({ text }: { text: string }) {
   const [displayText, setDisplayText] = useState(text);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let iterations = 0;
+    const interval = setInterval(() => {
+      setDisplayText(prev => 
+        prev.split("").map((_, index) => {
+          if (index < iterations) return text[index];
+          return chars[Math.floor(Math.random() * chars.length)];
+        }).join("")
+      );
+      if (iterations >= text.length) clearInterval(interval);
+      iterations += 1/3;
+    }, 30);
+    return () => clearInterval(interval);
+  }, [isInView, text]);
 
   return (
-    <motion.span
-      onViewportEnter={() => {
-        let iterations = 0;
-        const interval = setInterval(() => {
-          setDisplayText(prev => 
-            prev.split("").map((_, index) => {
-              if (index < iterations) return text[index];
-              return chars[Math.floor(Math.random() * chars.length)];
-            }).join("")
-          );
-          if (iterations >= text.length) clearInterval(interval);
-          iterations += 1/3;
-        }, 30);
-      }}
-      className="font-mono text-cyan-400"
-    >
+    <span ref={ref} className="font-mono text-cyan-400">
       {displayText}
-    </motion.span>
+    </span>
   );
 }
 
