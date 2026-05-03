@@ -276,10 +276,10 @@ export function SigilOverlay() {
   if (isMobile) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden opacity-20 scare-flicker">
+    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden scare-flicker">
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute top-10 left-10 w-64 h-64 text-cyan-900/20 cursor-crosshair pointer-events-auto"
+        className="absolute top-10 left-10 w-64 h-64 text-cyan-900 cursor-crosshair pointer-events-auto opacity-10"
         whileHover={{ 
           scale: 1.2, 
           color: "#00ffff", 
@@ -305,7 +305,7 @@ export function SigilOverlay() {
 
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900/20 cursor-crosshair pointer-events-auto"
+        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900 cursor-crosshair pointer-events-auto opacity-10"
         whileHover={{ 
           scale: 1.2, 
           color: "#ff00ff", 

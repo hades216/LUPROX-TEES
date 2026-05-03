@@ -95,10 +95,9 @@ export function CyberCentipede() {
         const walkCycle = Math.sin(time * 10 + i * 0.5) * 0.5;
 
         // Gloomy vibrant legs
-        ctx.strokeStyle = "rgba(180, 0, 255, 0.4)";
+        ctx.strokeStyle = "rgba(180, 0, 255, 0.2)";
         ctx.lineWidth = 3 + sizeFade * 4;
-        ctx.shadowColor = "rgba(180, 0, 255, 0.8)";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 0;
 
         // Left Leg
         ctx.beginPath();
@@ -150,45 +149,37 @@ export function CyberCentipede() {
         // Base Glassy Armor Plate
         ctx.beginPath();
         if (i === 0) {
-          // Head
           ctx.ellipse(0, 0, height, width, 0, -Math.PI / 2, Math.PI * 1.5);
         } else if (i === SEGMENTS - 1) {
-          // Tail
           ctx.moveTo(height, width - 5);
           ctx.lineTo(-height * 1.5, 0);
           ctx.lineTo(height, -width + 5);
         } else {
-          // Body 
           ctx.ellipse(0, 0, height, width, 0, 0, Math.PI * 2);
         }
 
         const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, height);
-        gradient.addColorStop(0, "rgba(255, 255, 255, 0.4)");
-        gradient.addColorStop(0.5, "rgba(0, 255, 255, 0.15)");
-        gradient.addColorStop(1, "rgba(20, 0, 40, 0.3)");
+        gradient.addColorStop(0, "rgba(255, 255, 255, 0.2)");
+        gradient.addColorStop(0.5, "rgba(0, 255, 255, 0.1)");
+        gradient.addColorStop(1, "rgba(20, 0, 40, 0.2)");
 
         ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = "rgba(0, 255, 255, 0.4)";
+        ctx.strokeStyle = "rgba(0, 255, 255, 0.2)";
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        ctx.shadowColor = "rgba(0, 255, 255, 0.8)";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 0;
 
         // Inner glowing core
         ctx.beginPath();
         ctx.ellipse(0, 0, height * 0.4, width * 0.4, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0, 255, 255, 0.5)";
+        ctx.fillStyle = "rgba(0, 255, 255, 0.3)";
         ctx.fill();
-
-        ctx.shadowBlur = 0;
 
         // Head Mandibles
         if (i === 0) {
-          ctx.shadowColor = "rgba(255, 0, 255, 0.8)";
-          ctx.shadowBlur = 15;
-          ctx.strokeStyle = "rgba(255, 0, 255, 0.7)";
+          ctx.strokeStyle = "rgba(255, 0, 255, 0.5)";
           ctx.lineWidth = 2;
 
           const pinch = Math.sin(time * 5) * 0.2;
@@ -202,8 +193,6 @@ export function CyberCentipede() {
           ctx.moveTo(height * 0.8, -width * 0.6);
           ctx.quadraticCurveTo(height + 15, -width - 10 - pinch * 10, height + 25, 0);
           ctx.stroke();
-          
-          ctx.shadowBlur = 0;
         }
 
         ctx.restore();

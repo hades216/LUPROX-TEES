@@ -183,8 +183,7 @@ export default function App() {
       {/* Lightning Effect */}
       <Lightning />
 
-      {/* Parallax Sigils */}
-      <motion.div style={{ y: parallaxMid }} className="fixed inset-0 pointer-events-none z-0 opacity-[0.02]">
+      <motion.div style={{ y: parallaxMid }} className="fixed inset-0 pointer-events-none z-0">
         <SigilOverlay />
       </motion.div>
       
@@ -320,8 +319,8 @@ export default function App() {
             </motion.div>
             
             <motion.div 
-              style={{ y: parallaxNear }}
-              className="relative aspect-square glossy-panel flex items-center justify-center group overflow-hidden rounded-[2rem]"
+               style={{ y: parallaxNear }}
+               className="relative h-[300px] md:h-auto md:aspect-square flex items-center justify-center group overflow-hidden rounded-[2rem] border border-white/5 md:bg-white/[0.02]"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="absolute top-6 left-6 text-xs text-white/50 uppercase tracking-widest">
@@ -344,7 +343,7 @@ export default function App() {
                className="order-2 md:order-1"
             >
               <SlideReveal>
-                <div className="relative aspect-square glossy-panel flex items-center justify-center group overflow-hidden rounded-[2rem]">
+                <div className="relative h-[300px] md:h-auto md:aspect-square flex items-center justify-center group overflow-hidden rounded-[2rem] border border-white/5 md:bg-white/[0.02]">
                   <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-6 right-6 text-xs text-white/50 uppercase tracking-widest">
                     Model: <CyberGlyph text="CS-02-FS" />
