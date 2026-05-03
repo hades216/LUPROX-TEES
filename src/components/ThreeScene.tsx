@@ -1,21 +1,19 @@
 import { useRef, useMemo, useState, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  Float,
-  MeshDistortMaterial,
-  MeshWobbleMaterial,
-  Environment,
+import { 
+  Float, 
+  MeshDistortMaterial, 
+  MeshWobbleMaterial, 
+  Environment, 
   PerspectiveCamera,
   Text,
+  Center,
   Html,
   Cloud,
   Sparkles,
-  MeshTransmissionMaterial,
-  Instances,
-  Instance
+  MeshTransmissionMaterial
 } from "@react-three/drei";
 import * as THREE from "three";
-import { useDOMTracker } from "./useDOMTracker";
 
 function SigilParticles({ count = 100 }) {
   const points = useMemo(() => {
@@ -187,12 +185,25 @@ function BloodRain({ count = 600 }) {
   );
 }
 
-function CyberHelmet() {
+function CyberHelmet({ offset }: { offset: number }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const { viewport } = useThree();
   const isMobile = window.innerWidth < 768;
 
-  useDOMTracker('model-hero', groupRef, { rotationSpeed: 0.5, scaleMultiplier: 1.4, yOffsetAmount: 0.05 });
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Visibility for the first section (Hero) - 0.0 to 0.25
+      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, -0.05, 0.3));
+      groupRef.current.visible = visibility > 0.01;
+      groupRef.current.position.y = (0.12 - offset) * 15 + Math.sin(state.clock.elapsedTime * 4) * 0.05;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.5 + offset * Math.PI;
+      groupRef.current.scale.setScalar(visibility * (isMobile ? 0.9 : 1.4));
+      
+      const targetX = isMobile ? 0 : (-viewport.width / 5);
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
+    }
+  });
 
   return (
     <group 
@@ -242,12 +253,27 @@ function CyberHelmet() {
   );
 }
 
-function CyberShirt() {
+function CyberShirt({ scrollProgress }: { scrollProgress: any }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
-  useDOMTracker('model-dropdown', groupRef, { rotationSpeed: 0.3, scaleMultiplier: 1.3, yOffsetAmount: 0.02 });
+  useFrame((state) => {
+    if (groupRef.current) {
+      const isMobile = window.innerWidth < 768;
+      const offset = scrollProgress.get();
+      // Visibility for the second section (Drop Down) 
+      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.1, 0.45));
+      groupRef.current.visible = visibility > 0.01;
+      groupRef.current.position.y = (0.28 - offset) * 10 + Math.sin(state.clock.elapsedTime * 6) * 0.02;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + offset * Math.PI * 2;
+      groupRef.current.scale.setScalar(visibility * (isMobile ? 1.0 : 1.3));
+      
+      // Fixed X offset to prevent running off ultra-wide screens
+      const targetX = isMobile ? 0 : 2.2;
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
+    }
+  });
 
   return (
     <group 
@@ -303,7 +329,7 @@ function CyberShirt() {
   );
 }
 
-function FullSleeveModel() {
+function FullSleeveModel({ scrollProgress }: { scrollProgress: any }) {
   const groupRef = useRef<THREE.Group>(null);
   const hoverStartTimeRef = useRef<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -314,9 +340,22 @@ function FullSleeveModel() {
   const [hoveredSigil, setHoveredSigil] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  useDOMTracker('model-fullsleeves', groupRef, { rotationSpeed: -0.6, scaleMultiplier: 1.25, yOffsetAmount: 0.02 });
-
   useFrame((state, delta) => {
+    if (groupRef.current) {
+      const isMobile = window.innerWidth < 768;
+      const offset = scrollProgress.get();
+      // Visibility for the third section (Full Sleeves)
+      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.35, 0.75));
+      groupRef.current.visible = visibility > 0.01;
+      groupRef.current.position.y = (0.55 - offset) * 10 + Math.cos(state.clock.elapsedTime * 5) * 0.02;
+      groupRef.current.rotation.y = -state.clock.elapsedTime * 0.6 + offset * Math.PI * 3;
+      groupRef.current.scale.setScalar(visibility * (isMobile ? 1.0 : 1.25));
+      
+      // Fixed X offset to prevent running off ultra-wide screens
+      const targetX = isMobile ? 0 : -2.2;
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
+    }
+
     // Dynamic Intensity Calculation
     if (hoveredSigil) {
         setIntensity(prev => Math.min(prev + delta * 2, 8)); // 0 to 8
@@ -423,12 +462,27 @@ function FullSleeveModel() {
   );
 }
 
-function IndustrialHoodie() {
+function IndustrialHoodie({ scrollProgress }: { scrollProgress: any }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  useDOMTracker('model-footer', groupRef, { rotationSpeed: 0.25, scaleMultiplier: 1.35, yOffsetAmount: 0.05 });
+  useFrame((state) => {
+    if (groupRef.current) {
+      const isMobile = window.innerWidth < 768;
+      const offset = scrollProgress.get();
+      // Visibility for the final section
+      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.65, 1.0));
+      groupRef.current.visible = visibility > 0.01;
+      groupRef.current.position.y = (0.83 - offset) * 10 + Math.sin(state.clock.elapsedTime * 3) * 0.05;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.25 + offset * Math.PI * 0.5;
+      groupRef.current.scale.setScalar(visibility * (isMobile ? 0.9 : 1.35));
+      
+      // Fixed X offset
+      const targetX = isMobile ? 0 : 2.2;
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
+    }
+  });
 
   return (
     <group 
@@ -507,7 +561,7 @@ function VoidLattice() {
       <mesh>
         <sphereGeometry args={[1, isMobile ? 16 : 64, isMobile ? 16 : 64]} />
         <meshBasicMaterial 
-          color="#001122" 
+          color="#1a0000" 
           wireframe 
           transparent 
           opacity={0.15} 
@@ -518,7 +572,7 @@ function VoidLattice() {
         <mesh rotation={[Math.PI / 4, 0, 0]}>
           <sphereGeometry args={[1.02, 32, 32]} />
           <meshBasicMaterial 
-            color="#220022" 
+            color="#000000" 
             wireframe 
             transparent 
             opacity={0.05} 
@@ -531,20 +585,31 @@ function VoidLattice() {
 }
 
 function AbyssalGlow() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      const scale = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+      meshRef.current.scale.set(scale, scale, scale);
+    }
+  });
+
   return (
-    <mesh position={[0, 0, -10]}>
+    <mesh ref={meshRef} position={[0, 0, -10]}>
       <sphereGeometry args={[15, 32, 32]} />
       <meshBasicMaterial 
-        color="#110022" 
+        color="#220000" 
         transparent 
-        opacity={0.05} 
+        opacity={0.08} 
         side={THREE.BackSide} 
+        blending={THREE.AdditiveBlending}
       />
     </mesh>
   );
 }
 
 function VoidDust({ count = 1000 }) {
+  const pointsRef = useRef<THREE.Points>(null);
   const points = useMemo(() => {
     const p = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -556,11 +621,14 @@ function VoidDust({ count = 1000 }) {
   }, [count]);
 
   useFrame((state) => {
-    // Just a static dust field for depth
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+      pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.1;
+    }
   });
 
   return (
-    <points>
+    <points ref={pointsRef}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -570,11 +638,12 @@ function VoidDust({ count = 1000 }) {
         />
       </bufferGeometry>
       <pointsMaterial 
-        size={0.015} 
-        color="#003333" 
+        size={0.02} 
+        color="#880000" 
         transparent 
-        opacity={0.3} 
+        opacity={0.4} 
         sizeAttenuation 
+        blending={THREE.AdditiveBlending}
       />
     </points>
   );
@@ -582,90 +651,193 @@ function VoidDust({ count = 1000 }) {
 
 function NeonCity() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const words = ['未来', '暗闇', '警告', 'サイバー', 'ネオン', '死', '機械'];
-  
-  const { buildings, windows } = useMemo(() => {
-    const bData = Array.from({ length: 40 }).map((_, i) => {
+  const buildings = useMemo(() => {
+    return Array.from({ length: 40 }).map((_, i) => {
       const x = (Math.random() - 0.5) * 60;
       const z = -15 - Math.random() * 25;
       const width = 2 + Math.random() * 4;
       const height = 5 + Math.random() * 30;
       const depth = 2 + Math.random() * 4;
-      const hasNeon = Math.random() > 0.6;
-      const word = hasNeon ? words[Math.floor(Math.random() * words.length)] : '';
-      const color = Math.random() > 0.5 ? "#00ffff" : "#ff00ff";
-      return { x, z, width, height, depth, hasNeon, word, color };
+      return { x, z, width, height, depth };
     });
-
-    const wData: any[] = [];
-    bData.forEach(b => {
-      const numWindows = Math.floor(b.height * 1.5);
-      for (let i = 0; i < numWindows; ++i) {
-        const isFront = Math.random() > 0.5;
-        const wx = (Math.random() - 0.5) * b.width * 0.8;
-        const wy = (Math.random() - 0.5) * b.height * 0.9;
-        const wz = (Math.random() - 0.5) * b.depth * 0.8;
-        
-        wData.push({
-          position: [
-            b.x + (isFront ? wx : b.width/2 + 0.01),
-            b.height/2 + wy,
-            b.z + (isFront ? b.depth/2 + 0.01 : wz)
-          ] as [number, number, number],
-          rotation: [0, isFront ? 0 : Math.PI/2, 0] as [number, number, number],
-          color: Math.random() > 0.4 ? "#fffde7" : "#4fc3f7"
-        });
-      }
-    });
-
-    return { buildings: bData, windows: wData };
   }, []);
 
   return (
     <group position={[0, -5, 0]}>
       {buildings.map((b, i) => (
-        <mesh key={`b-${i}`} position={[b.x, b.height / 2, b.z]}>
-          <boxGeometry args={[b.width, b.height, b.depth]} />
-          <meshStandardMaterial color="#030510" roughness={0.3} metalness={0.9} />
-
-          {b.hasNeon && (
-            <group position={[b.width / 2 + 0.01, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-              <mesh>
-                <planeGeometry args={[0.5, b.height * 0.7]} />
-                <meshBasicMaterial color={b.color} transparent opacity={0.2} />
-              </mesh>
-              <Text
-                position={[0, 0, 0.01]}
-                color={b.color}
-                fontSize={0.8}
-                maxWidth={0.5}
-                lineHeight={1}
-                textAlign="center"
-                anchorX="center"
-                anchorY="middle"
-                characters="未来暗闇警告サイバーネオン死機械"
-              >
-                {b.word.split('').join('\n')}
-              </Text>
-            </group>
+        <group key={`b-${i}`} position={[b.x, b.height / 2, b.z]}>
+          <mesh>
+            <boxGeometry args={[b.width, b.height, b.depth]} />
+            <meshStandardMaterial color="#050508" roughness={0.8} metalness={0.2} />
+          </mesh>
+          {/* Vertical Neon Strips */}
+          {Math.random() > 0.4 && (
+            <mesh position={[Math.random() > 0.5 ? -b.width / 2 - 0.05 : b.width / 2 + 0.05, 0, (Math.random() - 0.5) * b.depth * 0.8]}>
+              <boxGeometry args={[0.1, b.height * (0.4 + Math.random() * 0.6), 0.1]} />
+              <meshBasicMaterial color={Math.random() > 0.5 ? "#00ffff" : "#ff00ff"} />
+            </mesh>
           )}
-        </mesh>
+          {/* Horizontal Neon Strips */}
+          {Math.random() > 0.6 && (
+            <mesh position={[0, (Math.random() - 0.5) * b.height * 0.8, b.depth / 2 + 0.05]}>
+              <boxGeometry args={[b.width * (0.5 + Math.random() * 0.5), 0.1, 0.1]} />
+              <meshBasicMaterial color={Math.random() > 0.5 ? "#00ff88" : "#ff00aa"} />
+            </mesh>
+          )}
+        </group>
       ))}
+    </group>
+  );
+}
 
-      {windows.length > 0 && (
-        <Instances limit={windows.length}>
-          <planeGeometry args={[0.08, 0.15]} />
-          <meshBasicMaterial toneMapped={false} />
-          {windows.map((w, i) => (
-            <Instance
-              key={i}
-              position={w.position}
-              rotation={w.rotation}
-              color={w.color}
-            />
-          ))}
-        </Instances>
-      )}
+function AestheticBot({ position, rotation, color = "#00ffff", pose = 0 }: { position: [number, number, number], rotation: [number, number, number], color?: string, pose?: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Subtle runway pose animation/breathing
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5 + position[0]) * 0.15;
+      if (pose === 0) {
+        groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
+      } else {
+        groupRef.current.rotation.y = -Math.sin(state.clock.elapsedTime * 0.4) * 0.12;
+      }
+    }
+  });
+
+  return (
+    <group position={position} rotation={rotation}>
+      <group ref={groupRef}>
+        {/* Bot Spine/Base */}
+        <mesh position={[0, 0.5, 0]}>
+          <cylinderGeometry args={[0.08, 0.05, 2, 16]} />
+          <meshPhysicalMaterial color="#111" metalness={1} roughness={0.2} />
+        </mesh>
+        
+        {/* High-tech mannequin head */}
+        <mesh position={[0, 2.7, 0]}>
+          <octahedronGeometry args={[0.25, 4]} />
+          <meshPhysicalMaterial color="#050505" metalness={1} roughness={0.1} clearcoat={1} />
+        </mesh>
+        {/* Glowing horizontal visor slit */}
+        <mesh position={[0, 2.7, 0.2]} rotation={[0, 0, 0]}>
+           <boxGeometry args={[0.3, 0.05, 0.1]} />
+           <meshBasicMaterial color={color} />
+        </mesh>
+        <pointLight position={[0, 2.7, 0.3]} color={color} intensity={2} distance={3} />
+
+        {/* Cybernetic Neck with glowing rings */}
+        <group position={[0, 2.2, 0]}>
+          <mesh>
+            <cylinderGeometry args={[0.1, 0.15, 0.6, 16]} />
+            <meshPhysicalMaterial color="#222" metalness={0.9} roughness={0.3} wireframe />
+          </mesh>
+          <mesh position={[0, 0.1, 0]}>
+            <torusGeometry args={[0.12, 0.01, 8, 16]} />
+            <meshBasicMaterial color={color} />
+          </mesh>
+        </group>
+
+        {/* Aesthetic Chrome Torso (wearing a virtual projection shirt) */}
+        <group position={[0, 1.4, 0]}>
+           {/* Internal core / chest */}
+           <mesh>
+              <capsuleGeometry args={[0.38, 0.9, 16, 16]} />
+              <meshPhysicalMaterial color="#050505" metalness={0.8} roughness={0.2} clearcoat={1} />
+           </mesh>
+           
+           {/* Holographic Shirt Layer */}
+           <mesh scale={1.05}>
+              <capsuleGeometry args={[0.38, 0.9, 16, 16]} />
+              <meshPhysicalMaterial color="#08080c" metalness={0.5} roughness={0.8} transparent opacity={0.6} />
+           </mesh>
+           
+           {/* Tech Decal on chest */}
+           <mesh position={[0, 0.2, 0.44]}>
+              <planeGeometry args={[0.3, 0.1]} />
+              <meshBasicMaterial color={color} transparent opacity={0.9} />
+           </mesh>
+           <mesh position={[0, -0.1, 0.44]}>
+              <planeGeometry args={[0.1, 0.1]} />
+              <meshBasicMaterial color="#fff" transparent opacity={0.9} />
+           </mesh>
+        </group>
+
+        {/* Shoulders - geometric & sleek */}
+        <mesh position={[-0.6, 2.0, 0]} rotation={[0, 0, Math.PI / 4]}>
+          <boxGeometry args={[0.2, 0.3, 0.2]} />
+          <meshPhysicalMaterial color="#fff" metalness={1} roughness={0.1} clearcoat={1} />
+        </mesh>
+        <mesh position={[0.6, 2.0, 0]} rotation={[0, 0, -Math.PI / 4]}>
+          <boxGeometry args={[0.2, 0.3, 0.2]} />
+          <meshPhysicalMaterial color="#fff" metalness={1} roughness={0.1} clearcoat={1} />
+        </mesh>
+
+        {/* Arms - robotic joints */}
+        <group position={[-0.65, 1.2, 0]} rotation={[0, 0, 0.1]}>
+           <mesh>
+             <cylinderGeometry args={[0.06, 0.04, 1.4, 16]} />
+             <meshPhysicalMaterial color="#1a1a1a" metalness={0.9} roughness={0.3} />
+           </mesh>
+           {/* Arm glowing bands */}
+           <mesh position={[0, 0.3, 0]}>
+             <torusGeometry args={[0.08, 0.015, 16, 16]} />
+             <meshBasicMaterial color={color} />
+           </mesh>
+           <mesh position={[0, -0.2, 0]}>
+             <torusGeometry args={[0.07, 0.015, 16, 16]} />
+             <meshBasicMaterial color={color} />
+           </mesh>
+        </group>
+        
+        <group position={[0.65, 1.2, 0]} rotation={[0, 0, -0.1]}>
+           <mesh>
+             <cylinderGeometry args={[0.06, 0.04, 1.4, 16]} />
+             <meshPhysicalMaterial color="#1a1a1a" metalness={0.9} roughness={0.3} />
+           </mesh>
+           <mesh position={[0, 0.3, 0]}>
+             <torusGeometry args={[0.08, 0.015, 16, 16]} />
+             <meshBasicMaterial color={color} />
+           </mesh>
+           <mesh position={[0, -0.2, 0]}>
+             <torusGeometry args={[0.07, 0.015, 16, 16]} />
+             <meshBasicMaterial color={color} />
+           </mesh>
+        </group>
+
+        {/* Legs (fading out neatly into the void) */}
+        <mesh position={[-0.2, -0.2, 0]}>
+          <cylinderGeometry args={[0.08, 0.0, 1.8, 16]} />
+          <meshPhysicalMaterial color="#111" metalness={0.9} roughness={0.5} />
+        </mesh>
+        <mesh position={[0.2, -0.2, 0]}>
+          <cylinderGeometry args={[0.08, 0.0, 1.8, 16]} />
+          <meshPhysicalMaterial color="#111" metalness={0.9} roughness={0.5} />
+        </mesh>
+
+        {/* High-fashion floating halo rings */}
+         <mesh position={[0, 1.4, 0]} rotation={[Math.PI / 3, pose === 0 ? Math.PI/4 : -Math.PI/4, 0]}>
+            <torusGeometry args={[1.2, 0.005, 16, 64]} />
+            <meshBasicMaterial color={color} transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+         </mesh>
+         <mesh position={[0, 0.5, 0]} rotation={[-Math.PI / 3, pose === 0 ? -Math.PI/4 : Math.PI/4, 0]}>
+            <torusGeometry args={[1.5, 0.008, 16, 64]} />
+            <meshBasicMaterial color="#fff" transparent opacity={0.2} blending={THREE.AdditiveBlending} />
+         </mesh>
+      </group>
+    </group>
+  );
+}
+
+function AestheticModelsBots() {
+  return (
+    <group position={[0, -1, -6]}>
+      {/* Left Back Model */}
+      <AestheticBot position={[-3.5, 0, -2]} rotation={[0, Math.PI / 6, 0]} color="#00ffff" pose={1} />
+      {/* Right Back Model */}
+      <AestheticBot position={[3.5, 0, -2]} rotation={[0, -Math.PI / 6, 0]} color="#ff00ff" pose={0} />
+      {/* Center Deep Model */}
+      <AestheticBot position={[0, 0.5, -6]} rotation={[0, 0, 0]} color="#ff0044" pose={1} />
     </group>
   );
 }
@@ -675,6 +847,7 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
   const { camera } = useThree();
 
   useFrame((state) => {
+    const isMobile = state.size.width < 768;
     const offset = scrollProgress.get();
     if (lightRef.current) {
       // Unsettling flicker
@@ -683,19 +856,16 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
     }
 
     // Camera distortion on scroll
-    camera.position.z = 5 + Math.sin(offset * Math.PI) * 2;
+    const cameraDist = isMobile ? 12 : 5;
+    camera.position.z = cameraDist + Math.sin(offset * Math.PI) * 2;
     camera.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.05 * offset;
     
     // Heartbeat pulse for lighting - optimized to avoid unnecessary color object creation
     const heart = Math.pow(Math.sin(state.clock.elapsedTime * 1.5), 10) * 2;
-    if (!state.scene.background) {
-      state.scene.background = new THREE.Color(0.01, 0.02, 0.06);
-    }
-    const bg = state.scene.background as THREE.Color;
     if (heart > 0.01) {
-      bg.setRGB(heart * 0.02 + 0.01, 0.01, heart * 0.03 + 0.06);
-    } else if (bg.r > 0.01 || bg.b > 0.06) {
-      bg.setRGB(0.01, 0.02, 0.06); // Back to #030510 base
+      state.scene.background = new THREE.Color(heart * 0.02, 0, 0);
+    } else if (state.scene.background instanceof THREE.Color && state.scene.background.r > 0) {
+      state.scene.background = new THREE.Color(0, 0, 0);
     }
   });
   
@@ -704,8 +874,8 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-      <fog attach="fog" args={["#030510", 5, 45]} />
-      {!isMobile ? <Environment preset="city" /> : <ambientLight intensity={0.5} />}
+      <fog attach="fog" args={["#000000", 5, 25]} />
+      {!isMobile && <Environment preset="city" />}
       <ambientLight intensity={0.4} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} />
       <pointLight position={[-10, -10, -10]} color="#4c0519" intensity={5} />
@@ -715,45 +885,47 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       {/* Rim light for better shape definition */}
       <pointLight position={[0, -5, -2]} color="#ffffff" intensity={2} />
       
-      <VoidLattice />
       <NeonCity />
       <AbyssalGlow />
-      {!isMobile ? <VoidDust count={2000} /> : <VoidDust count={500} />}
+      {!isMobile && <VoidDust count={2000} />}
       
-      <CyberHelmet />
-      <CyberShirt />
-      <FullSleeveModel />
-      <IndustrialHoodie />
-      {!isMobile ? <BloodRain count={800} /> : <BloodRain count={200} />}
+      <CyberShirt scrollProgress={scrollProgress} />
+      <FullSleeveModel scrollProgress={scrollProgress} />
+      <IndustrialHoodie scrollProgress={scrollProgress} />
+      {!isMobile && <BloodRain count={800} />}
 
       {/* Pulsing Void Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial 
-          color="#050812" 
-          roughness={0.1} 
-          metalness={0.9}
+          color="#000000" 
+          roughness={0.2} 
+          metalness={0.8}
         />
       </mesh>
 
       {/* Cinematic Horror Elements */}
-      <Sparkles 
-        count={isMobile ? 50 : 200} 
-        size={4} 
-        speed={0.5} 
-        scale={10} 
-        color="#ffffff" 
-        opacity={isMobile ? 0.05 : 0.1} 
-      />
-      
-      <group position={[0, -2, -5]}>
-        <Cloud
-          opacity={isMobile ? 0.1 : 0.2}
-          speed={0.2}
-          segments={isMobile ? 8 : 20}
-          color="#110033"
-        />
-      </group>
+      {!isMobile && (
+        <>
+          <Sparkles 
+            count={200} 
+            size={4} 
+            speed={0.5} 
+            scale={10} 
+            color="#ffffff" 
+            opacity={0.1} 
+          />
+          
+          <group position={[0, -2, -5]}>
+            <Cloud
+              opacity={0.2}
+              speed={0.2}
+              segments={20}
+              color="#4c0519"
+            />
+          </group>
+        </>
+      )}
     </>
   );
 }

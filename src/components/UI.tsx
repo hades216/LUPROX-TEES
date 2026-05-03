@@ -4,9 +4,10 @@ import { CentipedeLogo } from "./CentipedeLogo";
 import { useEffect, useState } from "react";
 
 export function LoadingScreen() {
-  const { progress, active } = useProgress();
+  const { progress, active, item, loaded, total } = useProgress();
   const [isLoading, setIsLoading] = useState(true);
   const [displayProgress, setDisplayProgress] = useState(0);
+  const [randomData, setRandomData] = useState("0x00000000");
 
   useEffect(() => {
     setDisplayProgress(prev => Math.max(prev, progress));
@@ -15,6 +16,15 @@ export function LoadingScreen() {
       return () => clearTimeout(timeout);
     }
   }, [progress]);
+
+  useEffect(() => {
+    if (isLoading) {
+      const dataInterval = setInterval(() => {
+        setRandomData("0x" + Math.floor(Math.random() * 4294967295).toString(16).padStart(8, '0').toUpperCase());
+      }, 50);
+      return () => clearInterval(dataInterval);
+    }
+  }, [isLoading]);
 
   // Bulletproof fallback - force loading screen to finish after 3 seeconds maximum
   // This prevents infinite loading if no heavy assets are mounted in the scene (e.g. mobile fallback materials).
@@ -44,25 +54,33 @@ export function LoadingScreen() {
         >
           {/* Deep Abyssal Glow */}
           <motion.div 
-            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#083344_0%,_transparent_60%)] mix-blend-screen pointer-events-none"
           />
 
-          {/* Noise overlay */}
-          <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/organic/1920/1080')] mix-blend-screen grayscale pointer-events-none" />
+          {/* Dynamic Grid Background */}
+          <div className="absolute inset-0 bg-[linear-gradient(transparent_98%,rgba(0,255,255,0.05)_100%),linear-gradient(90deg,transparent_98%,rgba(0,255,255,0.05)_100%)] bg-[length:40px_40px] pointer-events-none" />
           
           {/* Rotating Occult Rings */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute border border-red-900/30 rounded-full w-96 h-96 opacity-20 border-dashed pointer-events-none"
+            className="absolute border border-red-900/30 rounded-full w-[28rem] h-[28rem] opacity-30 border-dashed pointer-events-none"
           />
           <motion.div
             animate={{ rotate: -360 }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute border border-cyan-400/20 rounded-full w-64 h-64 border-dotted pointer-events-none shadow-[0_0_20px_#00ffff_inset]"
+            className="absolute border border-cyan-400/20 rounded-full w-72 h-72 border-dotted pointer-events-none shadow-[0_0_30px_rgba(0,255,255,0.1)_inset]"
           />
+
+          {/* Random Binary Data stream on left/right edges */}
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col gap-1 text-[8px] font-mono text-cyan-400/30 uppercase tracking-widest text-right">
+            {[...Array(15)].map((_, i) => <motion.span key={i} animate={{ opacity: [0.2, 0.8, 0.2] }} transition={{ duration: Math.random() * 2 + 1, repeat: Infinity }}>{randomData}</motion.span>)}
+          </div>
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-1 text-[8px] font-mono text-red-500/30 uppercase tracking-widest text-left">
+             {[...Array(15)].map((_, i) => <motion.span key={i} animate={{ opacity: [0.2, 0.8, 0.2] }} transition={{ duration: Math.random() * 2 + 1, repeat: Infinity }}>{Math.random().toString(36).substring(2, 10)}</motion.span>)}
+          </div>
 
           <motion.div 
             animate={{ 
@@ -80,16 +98,26 @@ export function LoadingScreen() {
             LUPROX
           </h2>
           
-          <div className="relative z-10 flex flex-col items-center mt-8">
-            <div className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/50 mb-2 h-4 font-mono text-center">
-              {getLoadingText(displayProgress)}
+          <div className="relative z-10 flex flex-col items-center mt-8 w-64 md:w-96">
+            <div className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-cyan-400/70 mb-2 h-4 font-mono text-center flex w-full justify-between">
+              <span>SYS_STATUS: ACTIVE</span>
+              <span>{randomData}</span>
             </div>
             
-            <div className="text-xl md:text-2xl font-mono text-cyan-400 font-bold mb-6 tracking-widest drop-shadow-[0_0_8px_#00ffff]">
+            <div className="text-xs uppercase tracking-[0.2em] text-white/50 mb-2 font-mono text-center">
+              {getLoadingText(displayProgress)}
+            </div>
+
+            {/* Asset tracking */}
+            <div className="text-[8px] font-mono text-cyan-400/40 uppercase mb-4 h-3 truncate w-full text-center">
+               {item ? `LOADING: ${item.split('/').pop()}` : "PREPARING SCENE..."} {loaded}/{total || '-'}
+            </div>
+            
+            <div className="text-xl md:text-2xl font-mono text-cyan-400 font-black mb-4 tracking-widest drop-shadow-[0_0_8px_#00ffff]">
               {displayProgress.toFixed(0)}%
             </div>
 
-            <div className="w-64 md:w-96 h-[2px] bg-white/5 relative overflow-hidden rounded-full">
+            <div className="w-full h-[6px] bg-white/5 relative overflow-hidden rounded-none border border-cyan-400/20 shadow-[0_0_10px_rgba(0,255,255,0.1)_inset]">
               <motion.div 
                 className="absolute top-0 left-0 h-full bg-cyan-400 shadow-[0_0_15px_#00ffff]"
                 initial={{ width: 0 }}
@@ -98,10 +126,12 @@ export function LoadingScreen() {
               />
               {/* Scanline passing over the loading bar */}
               <motion.div 
-                className="absolute top-0 left-0 h-full w-10 bg-white/50 blur-[2px]"
-                animate={{ x: [-50, 400] }}
+                className="absolute top-0 left-0 h-full w-20 bg-white/80 blur-[4px]"
+                animate={{ x: [-100, 500] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
               />
+              {/* Grid indentations on loading bar */}
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9InRyYW5zcGFyZW50Ii8+PGxpbmUgeDE9IjQiIHkxPSIwIiB4Mj0iNCIgeTI9IjQiIHN0cm9rZT0icmdiYSgwLCAwLCAwLCAwLjQpIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=')] opacity-50" />
             </div>
           </div>
         </motion.div>
@@ -273,19 +303,13 @@ export function DangerBulletin({ position = 'top' }: { position?: 'top' | 'botto
 
 export function SigilOverlay() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobile) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden scare-flicker">
+    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden opacity-20 scare-flicker">
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute top-10 left-10 w-64 h-64 text-cyan-900 cursor-crosshair pointer-events-auto opacity-10"
-        whileHover={{ 
-          scale: 1.2, 
-          color: "#00ffff", 
-          opacity: 1, 
-          filter: "drop-shadow(0 0 20px #00ffff)",
-          transition: { duration: 0.3 }
-        }}
+        className="absolute top-10 left-10 w-64 h-64 text-cyan-900/20"
         animate={{ 
           rotate: 360,
           x: isMobile ? 0 : [0, 1, -1, 0],
@@ -304,14 +328,7 @@ export function SigilOverlay() {
 
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900 cursor-crosshair pointer-events-auto opacity-10"
-        whileHover={{ 
-          scale: 1.2, 
-          color: "#ff00ff", 
-          opacity: 1, 
-          filter: "drop-shadow(0 0 20px #ff00ff)",
-          transition: { duration: 0.3 }
-        }}
+        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900/20"
         animate={{ 
           rotate: -360,
           scale: [1, 1.02, 0.98, 1]
@@ -326,13 +343,14 @@ export function SigilOverlay() {
         <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.2" />
       </motion.svg>
       
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50" />
     </div>
   );
 }
 
 export function Scanlines() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobile) return null;
   
   return (
     <div className="fixed inset-0 pointer-events-none z-[70] opacity-[0.03] overflow-hidden">
@@ -343,6 +361,7 @@ export function Scanlines() {
 
 export function CinematicEffects() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobile) return null;
   
   return (
     <div className="fixed inset-0 pointer-events-none z-[65]">
@@ -366,6 +385,7 @@ export function CinematicEffects() {
 
 export function DecorativeFloatingElements() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobile) return null;
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
@@ -399,6 +419,7 @@ export function DecorativeFloatingElements() {
 
 export function MovingShadows() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobile) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
