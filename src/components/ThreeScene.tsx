@@ -1,13 +1,12 @@
 import { useRef, useMemo, useState, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { 
-  Float, 
-  MeshDistortMaterial, 
-  MeshWobbleMaterial, 
-  Environment, 
+import {
+  Float,
+  MeshDistortMaterial,
+  MeshWobbleMaterial,
+  Environment,
   PerspectiveCamera,
   Text,
-  Center,
   Html,
   Cloud,
   Sparkles,
@@ -16,6 +15,7 @@ import {
   Instance
 } from "@react-three/drei";
 import * as THREE from "three";
+import { useDOMTracker } from "./useDOMTracker";
 
 function SigilParticles({ count = 100 }) {
   const points = useMemo(() => {
@@ -187,25 +187,12 @@ function BloodRain({ count = 600 }) {
   );
 }
 
-function CyberHelmet({ offset }: { offset: number }) {
+function CyberHelmet() {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const { viewport } = useThree();
   const isMobile = window.innerWidth < 768;
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      // Visibility for the first section (Hero) - 0.0 to 0.25
-      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, -0.05, 0.3));
-      groupRef.current.visible = visibility > 0.01;
-      groupRef.current.position.y = (0.12 - offset) * 15 + Math.sin(state.clock.elapsedTime * 4) * 0.05;
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.5 + offset * Math.PI;
-      groupRef.current.scale.setScalar(visibility * (isMobile ? 0.9 : 1.4));
-      
-      const targetX = isMobile ? 0 : (-viewport.width / 5);
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
-    }
-  });
+  useDOMTracker('model-hero', groupRef, { rotationSpeed: 0.5, scaleMultiplier: 1.4, yOffsetAmount: 0.05 });
 
   return (
     <group 
@@ -255,27 +242,12 @@ function CyberHelmet({ offset }: { offset: number }) {
   );
 }
 
-function CyberShirt({ scrollProgress }: { scrollProgress: any }) {
+function CyberShirt() {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
-  useFrame((state) => {
-    if (groupRef.current) {
-      const isMobile = window.innerWidth < 768;
-      const offset = scrollProgress.get();
-      // Visibility for the second section (Drop Down) 
-      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.1, 0.45));
-      groupRef.current.visible = visibility > 0.01;
-      groupRef.current.position.y = (0.28 - offset) * 10 + Math.sin(state.clock.elapsedTime * 6) * 0.02;
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + offset * Math.PI * 2;
-      groupRef.current.scale.setScalar(visibility * (isMobile ? 1.0 : 1.3));
-      
-      // Fixed X offset to prevent running off ultra-wide screens
-      const targetX = isMobile ? 0 : 2.2;
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
-    }
-  });
+  useDOMTracker('model-dropdown', groupRef, { rotationSpeed: 0.3, scaleMultiplier: 1.3, yOffsetAmount: 0.02 });
 
   return (
     <group 
@@ -331,7 +303,7 @@ function CyberShirt({ scrollProgress }: { scrollProgress: any }) {
   );
 }
 
-function FullSleeveModel({ scrollProgress }: { scrollProgress: any }) {
+function FullSleeveModel() {
   const groupRef = useRef<THREE.Group>(null);
   const hoverStartTimeRef = useRef<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -342,22 +314,9 @@ function FullSleeveModel({ scrollProgress }: { scrollProgress: any }) {
   const [hoveredSigil, setHoveredSigil] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  useFrame((state, delta) => {
-    if (groupRef.current) {
-      const isMobile = window.innerWidth < 768;
-      const offset = scrollProgress.get();
-      // Visibility for the third section (Full Sleeves)
-      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.35, 0.75));
-      groupRef.current.visible = visibility > 0.01;
-      groupRef.current.position.y = (0.55 - offset) * 10 + Math.cos(state.clock.elapsedTime * 5) * 0.02;
-      groupRef.current.rotation.y = -state.clock.elapsedTime * 0.6 + offset * Math.PI * 3;
-      groupRef.current.scale.setScalar(visibility * (isMobile ? 1.0 : 1.25));
-      
-      // Fixed X offset to prevent running off ultra-wide screens
-      const targetX = isMobile ? 0 : -2.2;
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
-    }
+  useDOMTracker('model-fullsleeves', groupRef, { rotationSpeed: -0.6, scaleMultiplier: 1.25, yOffsetAmount: 0.02 });
 
+  useFrame((state, delta) => {
     // Dynamic Intensity Calculation
     if (hoveredSigil) {
         setIntensity(prev => Math.min(prev + delta * 2, 8)); // 0 to 8
@@ -464,27 +423,12 @@ function FullSleeveModel({ scrollProgress }: { scrollProgress: any }) {
   );
 }
 
-function IndustrialHoodie({ scrollProgress }: { scrollProgress: any }) {
+function IndustrialHoodie() {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      const isMobile = window.innerWidth < 768;
-      const offset = scrollProgress.get();
-      // Visibility for the final section
-      const visibility = Math.sin(Math.PI * THREE.MathUtils.smoothstep(offset, 0.65, 1.0));
-      groupRef.current.visible = visibility > 0.01;
-      groupRef.current.position.y = (0.83 - offset) * 10 + Math.sin(state.clock.elapsedTime * 3) * 0.05;
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.25 + offset * Math.PI * 0.5;
-      groupRef.current.scale.setScalar(visibility * (isMobile ? 0.9 : 1.35));
-      
-      // Fixed X offset
-      const targetX = isMobile ? 0 : 2.2;
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
-    }
-  });
+  useDOMTracker('model-footer', groupRef, { rotationSpeed: 0.25, scaleMultiplier: 1.35, yOffsetAmount: 0.05 });
 
   return (
     <group 
@@ -761,7 +705,7 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
       <fog attach="fog" args={["#030510", 5, 45]} />
-      {!isMobile && <Environment preset="city" />}
+      {!isMobile ? <Environment preset="city" /> : <ambientLight intensity={0.5} />}
       <ambientLight intensity={0.4} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} />
       <pointLight position={[-10, -10, -10]} color="#4c0519" intensity={5} />
@@ -774,12 +718,13 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       <VoidLattice />
       <NeonCity />
       <AbyssalGlow />
-      {!isMobile && <VoidDust count={2000} />}
+      {!isMobile ? <VoidDust count={2000} /> : <VoidDust count={500} />}
       
-      <CyberShirt scrollProgress={scrollProgress} />
-      <FullSleeveModel scrollProgress={scrollProgress} />
-      <IndustrialHoodie scrollProgress={scrollProgress} />
-      {!isMobile && <BloodRain count={800} />}
+      <CyberHelmet />
+      <CyberShirt />
+      <FullSleeveModel />
+      <IndustrialHoodie />
+      {!isMobile ? <BloodRain count={800} /> : <BloodRain count={200} />}
 
       {/* Pulsing Void Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>
@@ -792,27 +737,23 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       </mesh>
 
       {/* Cinematic Horror Elements */}
-      {!isMobile && (
-        <>
-          <Sparkles 
-            count={200} 
-            size={4} 
-            speed={0.5} 
-            scale={10} 
-            color="#ffffff" 
-            opacity={0.1} 
-          />
-          
-          <group position={[0, -2, -5]}>
-            <Cloud
-              opacity={0.2}
-              speed={0.2}
-              segments={20}
-              color="#110033"
-            />
-          </group>
-        </>
-      )}
+      <Sparkles 
+        count={isMobile ? 50 : 200} 
+        size={4} 
+        speed={0.5} 
+        scale={10} 
+        color="#ffffff" 
+        opacity={isMobile ? 0.05 : 0.1} 
+      />
+      
+      <group position={[0, -2, -5]}>
+        <Cloud
+          opacity={isMobile ? 0.1 : 0.2}
+          speed={0.2}
+          segments={isMobile ? 8 : 20}
+          color="#110033"
+        />
+      </group>
     </>
   );
 }

@@ -47,6 +47,34 @@ export function CyberCentipede() {
     // Some simple pseudo-random noise
     const noise = (t: number) => Math.sin(t) * Math.cos(t * 1.5) * Math.sin(t * 0.3);
 
+    // Warm up the centipede so it's already crawling and spread out when the page loads
+    for (let j = 0; j < 500; j++) {
+      time += 0.01;
+      noiseX += 0.005;
+      noiseY += 0.007;
+
+      const wanderX = width / 2 + noise(noiseX) * (width / 2.5);
+      const wanderY = height / 2 + noise(noiseY) * (height / 2.5);
+      
+      target.x += (wanderX - target.x) * 0.02;
+      target.y += (wanderY - target.y) * 0.02;
+
+      points[0].x += (target.x - points[0].x) * 0.05;
+      points[0].y += (target.y - points[0].y) * 0.05;
+
+      for (let i = 1; i < SEGMENTS; i++) {
+        const dx = points[i - 1].x - points[i].x;
+        const dy = points[i - 1].y - points[i].y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > SEGMENT_SPACING) {
+          const angle = Math.atan2(dy, dx);
+          points[i].x = points[i - 1].x - Math.cos(angle) * SEGMENT_SPACING;
+          points[i].y = points[i - 1].y - Math.sin(angle) * SEGMENT_SPACING;
+        }
+      }
+    }
+
     const animate = () => {
       if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, width, height);

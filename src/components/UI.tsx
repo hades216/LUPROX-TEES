@@ -273,7 +273,6 @@ export function DangerBulletin({ position = 'top' }: { position?: 'top' | 'botto
 
 export function SigilOverlay() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  if (isMobile) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden scare-flicker">
@@ -334,7 +333,6 @@ export function SigilOverlay() {
 
 export function Scanlines() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  if (isMobile) return null;
   
   return (
     <div className="fixed inset-0 pointer-events-none z-[70] opacity-[0.03] overflow-hidden">
@@ -345,7 +343,6 @@ export function Scanlines() {
 
 export function CinematicEffects() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  if (isMobile) return null;
   
   return (
     <div className="fixed inset-0 pointer-events-none z-[65]">
@@ -369,7 +366,6 @@ export function CinematicEffects() {
 
 export function DecorativeFloatingElements() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  if (isMobile) return null;
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
@@ -403,7 +399,6 @@ export function DecorativeFloatingElements() {
 
 export function MovingShadows() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  if (isMobile) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">

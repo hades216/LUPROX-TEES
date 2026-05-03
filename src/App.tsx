@@ -240,6 +240,7 @@ export default function App() {
       <main className="relative z-10">
         {/* Hero Section */}
         <Section id="home" className="flex flex-col items-center justify-center text-center">
+          <div id="model-hero" className="absolute top-[20%] right-[-10%] md:right-[10%] w-[300px] h-[300px] pointer-events-none" />
           <motion.div 
             variants={staggerContainer}
             initial="initial"
@@ -319,6 +320,7 @@ export default function App() {
             </motion.div>
             
             <motion.div 
+               id="model-dropdown"
                style={{ y: parallaxNear }}
                className="relative h-[300px] md:h-auto md:aspect-square flex items-center justify-center group overflow-hidden rounded-[2rem] border border-white/5 md:bg-white/[0.02]"
             >
@@ -343,7 +345,7 @@ export default function App() {
                className="order-2 md:order-1"
             >
               <SlideReveal>
-                <div className="relative h-[300px] md:h-auto md:aspect-square flex items-center justify-center group overflow-hidden rounded-[2rem] border border-white/5 md:bg-white/[0.02]">
+                <div id="model-fullsleeves" className="relative h-[300px] md:h-auto md:aspect-square flex items-center justify-center group overflow-hidden rounded-[2rem] border border-white/5 md:bg-white/[0.02]">
                   <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-6 right-6 text-xs text-white/50 uppercase tracking-widest">
                     Model: <CyberGlyph text="CS-02-FS" />
@@ -412,6 +414,7 @@ export default function App() {
 
         {/* Footer / About Section */}
         <footer id="about" className="relative z-10 py-32 px-6 border-t border-purple-500/20 bg-black/50 overflow-hidden backdrop-blur-md">
+          <div id="model-footer" className="absolute top-10 right-[10%] w-[200px] h-[200px] pointer-events-none" />
           <motion.div style={{ y: parallaxSlow }} className="absolute inset-0 pointer-events-none">
             <DecorativeFloatingElements />
           </motion.div>
