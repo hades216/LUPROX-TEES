@@ -279,7 +279,14 @@ export function SigilOverlay() {
     <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden opacity-20 scare-flicker">
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute top-10 left-10 w-64 h-64 text-cyan-900/20"
+        className="absolute top-10 left-10 w-64 h-64 text-cyan-900/20 cursor-crosshair pointer-events-auto"
+        whileHover={{ 
+          scale: 1.2, 
+          color: "#00ffff", 
+          opacity: 1, 
+          filter: "drop-shadow(0 0 20px #00ffff)",
+          transition: { duration: 0.3 }
+        }}
         animate={{ 
           rotate: 360,
           x: isMobile ? 0 : [0, 1, -1, 0],
@@ -298,7 +305,14 @@ export function SigilOverlay() {
 
       <motion.svg
         viewBox="0 0 100 100"
-        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900/20"
+        className="absolute bottom-10 right-10 w-96 h-96 text-purple-900/20 cursor-crosshair pointer-events-auto"
+        whileHover={{ 
+          scale: 1.2, 
+          color: "#ff00ff", 
+          opacity: 1, 
+          filter: "drop-shadow(0 0 20px #ff00ff)",
+          transition: { duration: 0.3 }
+        }}
         animate={{ 
           rotate: -360,
           scale: [1, 1.02, 0.98, 1]
@@ -313,7 +327,7 @@ export function SigilOverlay() {
         <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.2" />
       </motion.svg>
       
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50 pointer-events-none" />
     </div>
   );
 }
