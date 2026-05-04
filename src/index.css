@@ -1,72 +1,73 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 @theme {
-  --color-maroon-50: #fff1f2;
-  --color-maroon-100: #ffe4e6;
-  --color-maroon-200: #fecdd3;
-  --color-maroon-300: #fda4af;
-  --color-maroon-400: #fb7185;
-  --color-maroon-500: #f43f5e;
-  --color-maroon-600: #e11d48;
-  --color-maroon-700: #be123c;
-  --color-maroon-800: #9f1239;
-  --color-maroon-900: #881337;
-  --color-maroon-950: #4c0519;
+  --color-maroon-50: #fef2f2;
+  --color-maroon-100: #fee2e2;
+  --color-maroon-500: #ef4444;
+  --color-maroon-600: #dc2626;
+  --color-maroon-900: #7f1d1d;
+  --color-maroon-950: #450a0a;
   
-  --font-cyber: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
   body {
-    @apply bg-black text-white font-cyber overflow-x-hidden antialiased;
+    @apply bg-black text-white font-sans antialiased overflow-x-hidden selection:bg-white selection:text-black;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-light;
-  }
-
-  /* Cinematic Vignette */
-  .vignette {
-    @apply fixed inset-0 pointer-events-none z-[60] hidden md:block;
-    background: radial-gradient(circle at center, transparent 40%, rgba(5,0,10,0.8) 100%);
-  }
-
-  /* Film Grain Overlay - smoother */
-  .grain {
-    @apply fixed inset-0 pointer-events-none z-[61] opacity-[0.03] hidden md:block mix-blend-screen;
-    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    @apply tracking-tighter font-bold uppercase;
   }
 }
 
 @layer utilities {
-  .text-glow {
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+  .brutal-border {
+    @apply border-2 border-white;
   }
   
-  .text-glow-neon {
-    text-shadow: 0 0 20px rgba(255, 0, 255, 0.6), 0 0 40px rgba(0, 255, 255, 0.4);
+  .brutal-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 1);
+  }
+  
+  .brutal-shadow-hover {
+    transition: all 0.2s ease;
+  }
+  
+  .brutal-shadow-hover:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(255, 255, 255, 1);
+  }
+  
+  .brutal-shadow-hover:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 1);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
   }
   
   .border-glow {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
-  
-  .glossy-panel {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-  }
-  
-  .bg-noise {
-    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+
+  .minimal-fade {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   }
 }
 
 @layer components {
-  /* Sleek aesthetic reveal */
-  .sleek-reveal {
-    position: relative;
-    display: inline-block;
+  /* Elegant reveal animation */
+  .reveal-text {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  
+  .reveal-text.is-visible {
+    clip-path: inset(0 0 0 0);
   }
 }
 
