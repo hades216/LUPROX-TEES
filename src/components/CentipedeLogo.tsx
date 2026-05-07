@@ -1,63 +1,20 @@
 import { motion } from "motion/react";
 
-export function CentipedeLogo() {
-  const segments = 8;
-  
+export function CentipedeLogo({ className = "" }: { className?: string }) {
   return (
-    <div className="relative w-12 h-12 flex items-center justify-center overflow-visible">
-      <div className="relative flex items-center">
-        {Array.from({ length: segments }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full border border-white/40 bg-maroon-900"
-            style={{
-              left: i * 4,
-              zIndex: segments - i,
-              boxShadow: "0 0 8px rgba(176, 38, 255, 0.4)"
-            }}
-            animate={{
-              y: [0, -4, 0, 4, 0],
-              x: [0, 2, 0, -2, 0],
-              scale: [1, 1.1, 1],
-              backgroundColor: ["#4c0519", "#b026ff", "#4c0519"]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              delay: i * 0.15,
-              ease: "easeInOut"
-            }}
-          >
-            {/* Legs */}
-            <motion.div 
-              className="absolute -left-1 top-1/2 w-1 h-[1px] bg-white/20"
-              animate={{ rotate: [0, 45, 0] }}
-              transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-            />
-            <motion.div 
-              className="absolute -right-1 top-1/2 w-1 h-[1px] bg-white/20"
-              animate={{ rotate: [0, -45, 0] }}
-              transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-            />
-          </motion.div>
-        ))}
-        {/* Head with antennae */}
-        <motion.div
-          className="absolute w-3 h-3 rounded-full border border-white bg-maroon-600 z-10"
-          style={{ left: -4 }}
-          animate={{
-            y: [0, -4, 0, 4, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          <div className="absolute -top-2 -left-1 w-[1px] h-3 bg-white/40 rotate-[-30deg]" />
-          <div className="absolute -top-2 right-0 w-[1px] h-3 bg-white/40 rotate-[30deg]" />
-        </motion.div>
-      </div>
-    </div>
+    <motion.div 
+      className={`relative flex items-center justify-center ${className}`}
+      whileHover={{ scale: 1.05 }}
+    >
+      <svg viewBox="0 0 100 100" className="w-10 h-10 fill-current text-[#d8b4fe] drop-shadow-[2px_2px_0px_#9333ea]">
+         <path d="M50 10 C 65 25, 35 45, 50 60 C 65 75, 35 95, 50 95" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="square" />
+         {/* Legs */}
+         <line x1="30" y1="20" x2="70" y2="25" stroke="currentColor" strokeWidth="6" />
+         <line x1="35" y1="40" x2="65" y2="45" stroke="currentColor" strokeWidth="6" />
+         <line x1="30" y1="60" x2="70" y2="65" stroke="currentColor" strokeWidth="6" />
+         <line x1="35" y1="80" x2="65" y2="85" stroke="currentColor" strokeWidth="6" />
+         <circle cx="50" cy="15" r="10" fill="currentColor" />
+      </svg>
+    </motion.div>
   );
 }

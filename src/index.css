@@ -15,7 +15,7 @@
 
 @layer base {
   body {
-    @apply bg-black text-white font-sans antialiased overflow-x-hidden selection:bg-white selection:text-black;
+    @apply bg-black text-[#f3e8ff] font-sans antialiased overflow-x-hidden selection:bg-[#9333ea] selection:text-white;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -25,11 +25,11 @@
 
 @layer utilities {
   .brutal-border {
-    @apply border-2 border-white;
+    @apply border-2 border-[#d8b4fe];
   }
   
   .brutal-shadow {
-    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 1);
+    box-shadow: 4px 4px 0px 0px #9333ea;
   }
   
   .brutal-shadow-hover {
@@ -38,12 +38,12 @@
   
   .brutal-shadow-hover:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px rgba(255, 255, 255, 1);
+    box-shadow: 6px 6px 0px 0px #9333ea;
   }
   
   .brutal-shadow-hover:active {
     transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 0px 0px #9333ea;
   }
 
   .text-glow {

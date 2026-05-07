@@ -31,20 +31,20 @@ function AbstractShirt({ scrollProgress }: { scrollProgress: any }) {
     >
       {hovered && (
         <Html position={[0, 1.5, 0]} center zIndexRange={[100, 0]}>
-          <div className="bg-[#0a0a0a]/90 border border-white/10 px-3 py-2 backdrop-blur-md pointer-events-none whitespace-nowrap min-w-[120px]">
-            <p className="text-xs text-white font-medium tracking-widest uppercase">CS-01-DD</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Abstract Form</p>
+          <div className="bg-[#3b0764]/90 border border-[#d8b4fe]/30 px-3 py-2 backdrop-blur-md pointer-events-none whitespace-nowrap min-w-[120px]">
+            <p className="text-xs text-[#d8b4fe] font-medium tracking-widest uppercase">CS-01-DD</p>
+            <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1">Abstract Form</p>
           </div>
         </Html>
       )}
       <mesh>
         <capsuleGeometry args={[0.7, 1.2, 4, 16]} />
-        <MeshDistortMaterial color="#ffffff" roughness={0.1} metalness={0.9} distort={0.2} speed={1} />
+        <MeshDistortMaterial color="#881337" roughness={0.1} metalness={0.9} distort={0.2} speed={1} />
       </mesh>
       {/* Accent rings */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.8, 0]}>
         <torusGeometry args={[0.75, 0.02, 16, 32]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.5} metalness={1} />
+        <meshStandardMaterial color="#d8b4fe" roughness={0.5} metalness={1} />
       </mesh>
     </group>
   );
@@ -79,20 +79,20 @@ function AbstractSleeve({ scrollProgress }: { scrollProgress: any }) {
     >
       {hovered && (
         <Html position={[0, 2, 0]} center zIndexRange={[100, 0]}>
-           <div className="bg-[#0a0a0a]/90 border border-white/10 px-3 py-2 backdrop-blur-md pointer-events-none whitespace-nowrap min-w-[120px]">
-             <p className="text-xs text-white font-medium tracking-widest uppercase">CS-02-FS</p>
-             <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Tech-Sleeve Form</p>
+           <div className="bg-[#3b0764]/90 border border-[#d8b4fe]/30 px-3 py-2 backdrop-blur-md pointer-events-none whitespace-nowrap min-w-[120px]">
+             <p className="text-xs text-[#d8b4fe] font-medium tracking-widest uppercase">CS-02-FS</p>
+             <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1">Tech-Sleeve Form</p>
            </div>
         </Html>
       )}
       <mesh>
         <cylinderGeometry args={[0.3, 0.4, 2.5, 32]} />
-        <meshPhysicalMaterial color="#050505" roughness={0.2} metalness={0.9} clearcoat={1} clearcoatRoughness={0.1} />
+        <meshPhysicalMaterial color="#3b0764" roughness={0.2} metalness={0.9} clearcoat={1} clearcoatRoughness={0.1} />
       </mesh>
       {/* Geometric outer shell */}
       <mesh>
         <cylinderGeometry args={[0.35, 0.45, 2.4, 6]} />
-        <meshPhysicalMaterial color="#ffffff" wireframe transparent opacity={0.1} roughness={0} metalness={1} />
+        <meshPhysicalMaterial color="#d8b4fe" wireframe transparent opacity={0.3} roughness={0} metalness={1} />
       </mesh>
     </group>
   );
@@ -115,14 +115,14 @@ function SceneContent({ scrollProgress }: { scrollProgress: any }) {
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
       {!isMobile && <Environment preset="studio" />}
       <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 10, 5]} intensity={1.5} color="#ffffff" />
-      <pointLight position={[-5, -5, -5]} color="#aaaaaa" intensity={2} />
+      <directionalLight position={[5, 10, 5]} intensity={1.5} color="#d8b4fe" />
+      <pointLight position={[-5, -5, -5]} color="#9333ea" intensity={3} />
       
       {/* Minimal grid floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 0]}>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#050505" roughness={0.8} metalness={0.2} />
-        <gridHelper args={[100, 40, "#1a1a1a", "#0a0a0a"]} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.01]} />
+        <gridHelper args={[100, 40, "#9333ea", "#3b0764"]} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.01]} />
       </mesh>
 
       <AbstractShirt scrollProgress={scrollProgress} />
